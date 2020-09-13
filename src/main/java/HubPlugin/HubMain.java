@@ -147,18 +147,6 @@ public class HubMain extends Plugin{
     @Override
     public void registerClientCommands(CommandHandler handler){
 
-        handler.<Player>register("assim", "Connect to the Assimilation server", (args, player) -> {
-            Call.onConnect(player.con, "aamindustry.play.ai", 6568);
-        });
-
-        handler.<Player>register("discord", "Prints the discord link", (args, player) -> {
-            player.sendMessage("[purple]https://discord.gg/GEnYcSv");
-        });
-
-        handler.<Player>register("uuid", "Prints your uuid", (args, player) -> {
-            player.sendMessage("[accent]Your uuid is: [scarlet]" + player.uuid);
-        });
-
         handler.<Player>register("votekick", "Disabled", (args, player) -> {
             player.sendMessage("No");
         });
