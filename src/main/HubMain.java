@@ -1,20 +1,18 @@
-package HubPlugin;
+package main;
 
 import arc.*;
 import arc.net.Server;
 import arc.util.*;
 import mindustry.core.Version;
 import mindustry.entities.bullet.BulletType;
-import mindustry.entities.type.*;
 import mindustry.game.EventType;
 import mindustry.game.EventType.*;
 import mindustry.game.Gamemode;
 import mindustry.game.Rules;
 import mindustry.gen.*;
+import mindustry.mod.Plugin;
 import mindustry.net.*;
 import mindustry.net.Net;
-import mindustry.plugin.Plugin;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -28,11 +26,11 @@ import java.rmi.Remote;
 
 import static mindustry.Vars.*;
 
-public class HubMain extends Plugin{
+public class HubMain extends Plugin {
 
     private final Rules rules = new Rules();
 
-    private final boolean[] serversUp = {false, false};
+    private final boolean[] serversUp = {false, false, false};
 
     private static int customPlayerCount = 0;
 
@@ -55,6 +53,9 @@ public class HubMain extends Plugin{
 
         int plaguex = 150*tilesize;
         int plaguey = 62*tilesize;
+
+        int campaignx = 230*tilesize;
+        int campaigny = 150*tilesize;
 
         for (BulletType b : content.bullets()){
             b.damage = 0;
@@ -84,16 +85,23 @@ public class HubMain extends Plugin{
             return false;
         });
 
-        Events.on(Trigger.update, () -> {
+        Events.on(EventType.Trigger.class, event -> {
 
-            for (Player player : playerGroup.all()) {
-                // ffa
-                if(serversUp[0] && Math.sqrt(Math.pow(player.x - ffax, 2)+ Math.pow(player.y - ffay, 2)) < 140){
-                    Call.onConnect(player.con, "aamindustry.play.ai", 6568);
-                }
+            for (Player player : Groups.player) {
+
                 // plague
                 if(serversUp[1] && Math.sqrt(Math.pow(player.x - plaguex, 2)+ Math.pow(player.y - plaguey, 2)) < 100){
-                    Call.onConnect(player.con, "aamindustry.play.ai", 6569);
+                    Call.connect(player.con, "aamindustry.play.ai", 6571);
+                }
+
+                // assimilation
+                if(serversUp[0] && Math.sqrt(Math.pow(player.x - ffax, 2)+ Math.pow(player.y - ffay, 2)) < 140){
+                    Call.connect(player.con, "aamindustry.play.ai", 6572);
+                }
+
+                // campaign
+                if(serversUp[2] && Math.sqrt(Math.pow(player.x - campaignx, 2)+ Math.pow(player.y - campaigny, 2)) < 100){
+                    Call.connect(player.con, "aamindustry.play.ai", 6573);
                 }
 
             }
@@ -101,44 +109,15 @@ public class HubMain extends Plugin{
             // Refresh server player count every second and check server status
             if (interval.get(timerPlayerCount, playerCountTime)){
                 updatePlayerCount();
-
                 updateServerStatus();
 
-                net.pingHost("aamindustry.play.ai", 6568, host ->{
-                    Call.onLabel("[gold]" + host.players + "[white] players",
-                            1f, 150*tilesize, 212*tilesize);
-                }, e ->{
-                    Call.onLabel("[gray]Server offline",
-                            1f, 150*tilesize, 212*tilesize);
-                });
 
-                net.pingHost("aamindustry.play.ai", 6569, host ->{
-                    Call.onLabel("[gold]" + host.players + "[white] players",
-                            1f, 150*tilesize, 86*tilesize);
-                }, e ->{
-                    Call.onLabel("[gray]Server offline",
-                            1f, 150*tilesize, 86*tilesize);
-                });
             }
 
         });
 
         Events.on(PlayerJoin.class, event -> {
-            net.pingHost("aamindustry.play.ai", 6568, host ->{
-                Call.onLabel(event.player.con,"[gold]" + host.players + "[white] players",
-                        1f, 150*tilesize, 212*tilesize);
-            }, e ->{
-                Call.onLabel(event.player.con,"[gray]Server offline",
-                        1f, 150*tilesize, 212*tilesize);
-            });
-
-            net.pingHost("aamindustry.play.ai", 6569, host ->{
-                Call.onLabel(event.player.con,"[gold]" + host.players + "[white] players",
-                        1f, 150*tilesize, 86*tilesize);
-            }, e ->{
-                Call.onLabel(event.player.con,"[gray]Server offline",
-                        1f, 150*tilesize, 86*tilesize);
-            });
+            updateServerStatus();
         });
 
 
@@ -146,10 +125,6 @@ public class HubMain extends Plugin{
 
     @Override
     public void registerClientCommands(CommandHandler handler){
-
-        handler.<Player>register("votekick", "Disabled", (args, player) -> {
-            player.sendMessage("No");
-        });
 
         handler.<Player>register("getpos", "Get (x,y)", (args, player) -> {
             player.sendMessage("(" + player.x + ", " + player.y + ")");
@@ -167,9 +142,10 @@ public class HubMain extends Plugin{
             return;
         }
 
-        customPlayerCount = playerGroup.size();
-        net.pingHost("aamindustry.play.ai", 6568, this::addCount, e -> {});
-        net.pingHost("aamindustry.play.ai", 6569, this::addCount, e -> {});
+        customPlayerCount = Groups.player.size();
+        net.pingHost("aamindustry.play.ai", 6571, this::addCount, e -> {});
+        net.pingHost("aamindustry.play.ai", 6572, this::addCount, e -> {});
+        net.pingHost("aamindustry.play.ai", 6573, this::addCount, e -> {});
     }
 
     private void addCount(Host host){
@@ -177,14 +153,43 @@ public class HubMain extends Plugin{
     }
 
     private void updateServerStatus(){
-        net.pingHost("aamindustry.play.ai", 6568, host -> { serversUp[0] = true; }, e -> {serversUp[0] = false;});
-        net.pingHost("aamindustry.play.ai", 6569, host -> { serversUp[1] = true; }, e -> {serversUp[1] = false;});
+
+        net.pingHost("aamindustry.play.ai", 6571, host ->{ // Plague
+            serversUp[1] = true;
+            Call.label("[gold]" + host.players + "[white] players",
+                    1f, 150*tilesize, 86*tilesize);
+        }, e ->{
+            serversUp[1] = false;
+            Call.label("[gray]Server offline",
+                    1f, 150*tilesize, 86*tilesize);
+        });
+
+        net.pingHost("aamindustry.play.ai", 6572, host ->{ // Assimilation
+            serversUp[0] = true;
+            Call.label("[gold]" + host.players + "[white] players",
+                    1f, 150*tilesize, 212*tilesize);
+        }, e ->{
+            serversUp[0] = false;
+            Call.label("[gray]Server offline",
+                    1f, 150*tilesize, 212*tilesize);
+        });
+
+        net.pingHost("aamindustry.play.ai", 6573, host ->{ // Campaign
+            serversUp[2] = true;
+            Call.label("[gold]" + host.players + "[white] players",
+                    1f, 235*tilesize, 155*tilesize);
+        }, e ->{
+            serversUp[2] = false;
+            Call.label("[gray]Server offline",
+                    1f, 235*tilesize, 155*tilesize);
+        });
+        Call.label("[gray]No longer featuring Winston Churchill :(", 1f, 65*tilesize, 160*tilesize);
     }
 
     public static ByteBuffer customWriteServerData(){
         String name = (headless ? Administration.Config.name.string() : player.name);
         String description = headless && !Administration.Config.desc.string().equals("off") ? Administration.Config.desc.string() : "";
-        String map = world.getMap() == null ? "None" : world.getMap().name();
+        String map = state.map == null ? "None" : state.map.name();
 
         ByteBuffer buffer = ByteBuffer.allocate(512);
 
@@ -196,7 +201,7 @@ public class HubMain extends Plugin{
         buffer.putInt(Version.build);
         writeString(buffer, Version.type, 32);
 
-        buffer.put((byte) Gamemode.bestFit(state.rules).ordinal());
+        buffer.put((byte) Gamemode.survival.ordinal());
         buffer.putInt(netServer.admins.getPlayerLimit());
 
         writeString(buffer, description, 100);

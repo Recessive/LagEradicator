@@ -1,7 +1,7 @@
 {
   "name": "HubPlugin",
   "author": "Recessive",
-  "main": "HubPlugin.HubMain",
+  "main": "main.HubMain",
   "description": "A hub plugin",
-  "version": 0.0
+  "version": 0.1
 }
