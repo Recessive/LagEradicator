@@ -57,6 +57,9 @@ public class HubMain extends Plugin {
         int campaignx = 230*tilesize;
         int campaigny = 150*tilesize;
 
+        int assaultx = 65*tilesize;
+        int assaulty = 150*tilesize;
+
         for (BulletType b : content.bullets()){
             b.damage = 0;
             b.splashDamage = 0;
@@ -104,6 +107,10 @@ public class HubMain extends Plugin {
                     Call.connect(player.con, "aamindustry.play.ai", 6573);
                 }
 
+                if(serversUp[2] && Math.sqrt(Math.pow(player.x - assaultx, 2)+ Math.pow(player.y - assaulty, 2)) < 100){
+                    Call.connect(player.con, "aamindustry.play.ai", 6573);
+                }
+
             }
 
             // Refresh server player count every second and check server status
@@ -146,6 +153,7 @@ public class HubMain extends Plugin {
         net.pingHost("aamindustry.play.ai", 6571, this::addCount, e -> {});
         net.pingHost("aamindustry.play.ai", 6572, this::addCount, e -> {});
         net.pingHost("aamindustry.play.ai", 6573, this::addCount, e -> {});
+        net.pingHost("aamindustry.play.ai", 6574, this::addCount, e -> {});
     }
 
     private void addCount(Host host){
@@ -183,7 +191,15 @@ public class HubMain extends Plugin {
             Call.label("[gray]Server offline",
                     1f, 235*tilesize, 155*tilesize);
         });
-        Call.label("[gray]No longer featuring Winston Churchill :(", 1f, 65*tilesize, 160*tilesize);
+        net.pingHost("aamindustry.play.ai", 6573, host ->{ // Campaign
+            serversUp[2] = true;
+            Call.label("[gold]" + host.players + "[white] players",
+                    1f, 65*tilesize, 160*tilesize);
+        }, e ->{
+            serversUp[2] = false;
+            Call.label("[gray]Server offline",
+                    1f, 65*tilesize, 160*tilesize);
+        });
     }
 
     public static ByteBuffer customWriteServerData(){
