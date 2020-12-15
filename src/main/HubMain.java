@@ -57,8 +57,8 @@ public class HubMain extends Plugin {
         int campaignx = 230*tilesize;
         int campaigny = 150*tilesize;
 
-        int assaultx = 65*tilesize;
-        int assaulty = 150*tilesize;
+        int assaultx = 55*tilesize;
+        int assaulty = 155*tilesize;
 
         for (BulletType b : content.bullets()){
             b.damage = 0;
@@ -108,7 +108,7 @@ public class HubMain extends Plugin {
                 }
 
                 if(serversUp[2] && Math.sqrt(Math.pow(player.x - assaultx, 2)+ Math.pow(player.y - assaulty, 2)) < 100){
-                    Call.connect(player.con, "aamindustry.play.ai", 6573);
+                    Call.connect(player.con, "aamindustry.play.ai", 6574);
                 }
 
             }
@@ -191,14 +191,14 @@ public class HubMain extends Plugin {
             Call.label("[gray]Server offline",
                     1f, 235*tilesize, 155*tilesize);
         });
-        net.pingHost("aamindustry.play.ai", 6573, host ->{ // Campaign
+        net.pingHost("aamindustry.play.ai", 6574, host ->{ // Campaign
             serversUp[2] = true;
             Call.label("[gold]" + host.players + "[white] players",
-                    1f, 65*tilesize, 160*tilesize);
+                    1f, 55*tilesize, 155*tilesize);
         }, e ->{
             serversUp[2] = false;
             Call.label("[gray]Server offline",
-                    1f, 65*tilesize, 160*tilesize);
+                    1f, 55*tilesize, 155*tilesize);
         });
     }
 
