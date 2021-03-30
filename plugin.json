@@ -1,7 +1,7 @@
 {
-  "name": "HubPlugin",
+  "name": "LagExterminator",
   "author": "Recessive",
-  "main": "main.HubMain",
-  "description": "A hub plugin",
+  "main": "main.ExterminatorMain",
+  "description": "A plugin for helping reduce lag",
   "version": 0.1
 }
