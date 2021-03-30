@@ -1,13 +1,16 @@
 package main;
 
 import arc.*;
+import arc.graphics.Color;
 import arc.net.Server;
 import arc.struct.Seq;
 import arc.util.*;
 import mindustry.content.Blocks;
+import mindustry.content.Fx;
 import mindustry.content.Items;
 import mindustry.content.UnitTypes;
 import mindustry.core.Version;
+import mindustry.entities.Effect;
 import mindustry.entities.bullet.BulletType;
 import mindustry.game.*;
 import mindustry.game.EventType.*;
@@ -50,6 +53,8 @@ public class EradicatorMain extends Plugin {
 
         Events.on(EventType.UnitCreateEvent.class, event -> {
             if(event.unit.type == UnitTypes.mono){
+
+
                 String teamName = event.unit.team().name;
                 teamMonos.putIfAbsent(teamName, 0);
                 int monoCount = teamMonos.get(teamName)+1;
@@ -69,12 +74,14 @@ public class EradicatorMain extends Plugin {
                     for(ItemStack stack : monoCost){
                         Call.transferItemTo(null, stack.item, stack.amount, tile.drawx(), tile.drawy(), tile.build);
                     }
-                }else{
+                }else {
                     teamMonos.put(teamName, monoCount);
                 }
 
                 event.unit.kill();
                 event.unit.dead(true);
+
+
             }
         });
 
@@ -86,8 +93,8 @@ public class EradicatorMain extends Plugin {
                         Tile tile = team.core().tile;
 
                         Seq<ItemStack> monoItems = ItemStack.list(
-                                Items.copper, 10*teamMonos.getOrDefault(team.team.name, 0),
-                                Items.lead, 5*teamMonos.getOrDefault(team.team.name, 0));
+                                Items.copper, 20*teamMonos.getOrDefault(team.team.name, 0),
+                                Items.lead, 20*teamMonos.getOrDefault(team.team.name, 0));
 
                         for(ItemStack stack : monoItems){
                             Call.transferItemTo(null, stack.item, stack.amount, tile.drawx(), tile.drawy(), tile.build);
