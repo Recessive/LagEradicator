@@ -1,7 +1,7 @@
 {
-  "name": "LagExterminator",
+  "name": "LagEradicator",
   "author": "Recessive",
-  "main": "main.ExterminatorMain",
+  "main": "main.EradicatorMain",
   "description": "A plugin for helping reduce lag",
   "version": 0.1
 }

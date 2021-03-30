@@ -32,7 +32,7 @@ import java.rmi.Remote;
 
 import static mindustry.Vars.*;
 
-public class ExterminatorMain extends Plugin {
+public class EradicatorMain extends Plugin {
 
     private HashMap<String, Integer> teamMonos = new HashMap<>();
 
@@ -93,7 +93,7 @@ public class ExterminatorMain extends Plugin {
                             Call.transferItemTo(null, stack.item, stack.amount, tile.drawx(), tile.drawy(), tile.build);
                         }
 
-                        Call.label("+" + monoItems.get(0).amount + "\uF838" + monoItems.get(1).amount + "\uF837",
+                        Call.label("+" + monoItems.get(0).amount + "\uF838 +" + monoItems.get(1).amount + "\uF837",
                                 1f, tile.drawx(), tile.drawy());
                     }
                 }
