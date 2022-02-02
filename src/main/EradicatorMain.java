@@ -37,22 +37,24 @@ import static mindustry.Vars.*;
 
 public class EradicatorMain extends Plugin {
 
-    private Seq<ItemStack> monoItems = ItemStack.list(
-            Items.copper, 300,
-                   Items.lead, 300);
+    private Seq<ItemStack> monoItems;
 
     public void init(){
 
+        monoItems = ItemStack.list(
+                Items.copper, 300,
+                Items.lead, 300);
+
         Events.on(EventType.UnitCreateEvent.class, event -> {
             if(event.unit.type == UnitTypes.mono) {
+                // Let players know they got resources
+                Call.label("\uF838+" + monoItems.get(0).amount + "\n\uF837+" + monoItems.get(1).amount,
+                        5f, event.spawner.tileX() * 8, event.spawner.tileY() * 8);
                 event.unit.health = 0;
 
 
-                // Let players know they got resources
-                Call.label("\uF838+" + monoItems.get(0) + "\n+" + monoItems.get(1) + "\uF837", 5, event.unit.x, event.unit.y);
 
                 Tile tile = event.unit.team.core().tile;
-
                 for (ItemStack stack : monoItems) {
                     Call.transferItemTo(null, stack.item, stack.amount, tile.drawx(), tile.drawy(), tile.build);
                 }
