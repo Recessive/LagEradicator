@@ -45,12 +45,11 @@ public class EradicatorMain extends Plugin {
                 Items.copper, 300,
                 Items.lead, 300);
 
-        Events.on(EventType.UnitCreateEvent.class, event -> {
+        Events.on(EventType.UnitDestroyEvent.class, event ->{
             if(event.unit.type == UnitTypes.mono) {
                 // Let players know they got resources
                 Call.label("\uF838+" + monoItems.get(0).amount + "\n\uF837+" + monoItems.get(1).amount,
-                        5f, event.spawner.tileX() * 8, event.spawner.tileY() * 8);
-                event.unit.health = 0;
+                        5f, event.unit.tileX() * 8, event.unit.tileY() * 8);
 
 
 
@@ -58,6 +57,12 @@ public class EradicatorMain extends Plugin {
                 for (ItemStack stack : monoItems) {
                     Call.transferItemTo(null, stack.item, stack.amount, tile.drawx(), tile.drawy(), tile.build);
                 }
+            }
+        });
+
+        Events.on(EventType.UnitCreateEvent.class, event -> {
+            if(event.unit.type == UnitTypes.mono) {
+                event.unit.health = 0;
             }
         });
 
