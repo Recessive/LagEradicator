@@ -47,6 +47,9 @@ public class EradicatorMain extends Plugin {
 
         Events.on(EventType.UnitDestroyEvent.class, event ->{
             if(event.unit.type == UnitTypes.mono) {
+                if(event.unit.team.core() == null){
+                    return;
+                }
                 // Let players know they got resources
                 Call.label("\uF838+" + monoItems.get(0).amount + "\n\uF837+" + monoItems.get(1).amount,
                         5f, event.unit.tileX() * 8, event.unit.tileY() * 8);
