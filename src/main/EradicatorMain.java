@@ -66,6 +66,7 @@ public class EradicatorMain extends Plugin {
         Events.on(EventType.UnitCreateEvent.class, event -> {
             if(event.unit.type == UnitTypes.mono) {
                 event.unit.health = 0;
+                event.unit.dead = true;
             }
         });
 
