@@ -51,8 +51,12 @@ public class EradicatorMain extends Plugin {
                     return;
                 }
                 // Let players know they got resources
-                Call.label("\uF838+" + monoItems.get(0).amount + "\n\uF837+" + monoItems.get(1).amount,
-                        5f, event.unit.tileX() * 8, event.unit.tileY() * 8);
+                for(Player player: Groups.player){
+                    if(player.team() == event.unit.team()){
+                        Call.label(player.con, "\uF838+" + monoItems.get(0).amount + "\n\uF837+" + monoItems.get(1).amount,
+                                5f, event.unit.tileX() * 8, event.unit.tileY() * 8);
+                    }
+                }
 
 
 
