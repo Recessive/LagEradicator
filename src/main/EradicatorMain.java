@@ -39,7 +39,35 @@ public class EradicatorMain extends Plugin {
 
     private Seq<ItemStack> monoItems;
 
+    private float realTime = 0f;
+    private int seconds;
+    private static long startTime = System.currentTimeMillis();
+
+    private RTInterval planClearInterval = new RTInterval(10),
+                        lagMessageInterval = new RTInterval(120);
+
+    private String lagMessage = "[scarlet]LOW TPS DETECTED ([gold]<15[scarlet])\n" +
+            "[blue]Clearing all poly build plans to reduce lag!";
+
     public void init(){
+
+
+        // Reduce lag by clearing build plans
+        Events.on(EventType.Trigger.class, event ->{
+           if(Core.graphics.getFramesPerSecond() < 15){
+               if(planClearInterval.get(seconds)){
+                   for(Teams.TeamData t : state.teams.getActive()){
+                       t.blocks.clear();
+                   }
+               }
+               if(lagMessageInterval.get(seconds)){
+                   Call.sendMessage(lagMessage);
+               }
+           }
+
+            realTime = System.currentTimeMillis() - startTime;
+            seconds = (int) (realTime / 1000);
+        });
 
         monoItems = ItemStack.list(
                 Items.copper, 300,
