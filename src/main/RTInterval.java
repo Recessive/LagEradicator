@@ -10,7 +10,7 @@ public class RTInterval {
 
     public boolean get(int time){
         if(time/seconds > quotient){
-            quotient ++;
+            quotient = time/seconds;
             return true;
         }
         return false;
