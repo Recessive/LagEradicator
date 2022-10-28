@@ -43,21 +43,24 @@ public class EradicatorMain extends Plugin {
     private int seconds;
     private static long startTime = System.currentTimeMillis();
 
-    private RTInterval planClearInterval = new RTInterval(20),
-                        lagMessageInterval = new RTInterval(12);
+    private RTInterval planClearInterval = new RTInterval(10),
+                        lagMessageInterval = new RTInterval(120);
 
-    private String lagMessage = "[scarlet]LOW TPS DETECTED ([gold]<15[scarlet])\n" +
-            "[blue]Clearing all poly build plans to reduce lag!";
+    private String lagMessage;
+
+    private int tpsThreshold = 5;
 
     public void init(){
 
+        lagMessage = "[scarlet]LOW TPS DETECTED ([gold]<" + tpsThreshold + "[scarlet])\n" +
+                "[blue]Clearing all poly build plans to reduce lag!";
 
         // Reduce lag by clearing build plans
         Events.on(EventType.Trigger.class, event ->{
             realTime = System.currentTimeMillis() - startTime;
             seconds = (int) (realTime / 1000);
 
-            if(Core.graphics.getFramesPerSecond() < 15){
+            if(Core.graphics.getFramesPerSecond() < tpsThreshold){
                 if(planClearInterval.get(seconds)){
                     for(Teams.TeamData t : state.teams.getActive()){
                         t.blocks.clear();
