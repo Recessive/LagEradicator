@@ -54,9 +54,8 @@ public class EradicatorMain extends Plugin {
 
         lagMessage = "[scarlet]LOW TPS DETECTED ([gold]<" + tpsThreshold + "[scarlet])\n" +
                 "[blue]Clearing all poly build plans to reduce lag!";
-
         // Reduce lag by clearing build plans
-        Events.on(EventType.Trigger.class, event ->{
+        Events.run(Trigger.update, () -> {
             realTime = System.currentTimeMillis() - startTime;
             seconds = (int) (realTime / 1000);
 
