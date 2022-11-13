@@ -63,7 +63,7 @@ public class EradicatorMain extends Plugin {
             if(Core.graphics.getFramesPerSecond() < tpsThreshold){
                 if(planClearInterval.get(seconds)){
                     for(Teams.TeamData t : state.teams.getActive()){
-                        t.blocks.clear();
+                        t.buildings.clear();
                     }
                 }
                 if(lagMessageInterval.get(seconds)){
